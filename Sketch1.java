@@ -1,5 +1,4 @@
 import java.util.Random;
-import javax.sound.sampled.spi.AudioFileReader;
 import java.awt.Rectangle;
 import processing.core.PApplet;
 import processing.core.PImage;
@@ -11,19 +10,17 @@ public class Sketch1 extends PApplet {
   float showfuel = 100;
   int carY = h/40*28;
   
-  int gasmas = 0;
+  int gaschance1 = 0;
   float rMove;
   float eX = carX;
   float eY = h + (h*20);
   float difficulty = 1;
   boolean leftPressed = false;
   boolean rightPressed = false;
-  boolean allBlocksOff = false;
   boolean isRand = false;
-  int[] blocks = new int[10];
-  int gases = 0;
+  int[] badcar = new int[10];
+  int gasesY = 0;
   int gasesX = 0;
-  float rand = random(0,w);
   Random ra = new Random();
   int j = ra.nextInt(w);
   int k = ra.nextInt(w);
@@ -36,11 +33,7 @@ public class Sketch1 extends PApplet {
   int fueltanks;
   float timeBetweenScore = 0;
   float timeBetweenGas = 0;
-  float timeGasGlitch = 0;
-  float useless = 0;
   boolean isCrashed = false;
-  int widthimg = 0;
-  int gg = 0;
   PImage img;
   PImage explo;
   PImage road;
@@ -105,7 +98,7 @@ public class Sketch1 extends PApplet {
     String pointsString = "Score: "+Integer.toString(pointsInt);
 
     // for loop for road
-    for (int i = 0; i<blocks.length; i++){
+    for (int i = 0; i<badcar.length; i++){
     
     // draws road
     image(road, h*1625/10000*(-1), rMove- h);
@@ -151,16 +144,16 @@ public class Sketch1 extends PApplet {
 
   for (int i = 0; i < difficulty; i++) {
     
-    //blocks
-    blocks[i]= blocks[i]+h/50;
+    //badcar
+    badcar[i]= badcar[i]+h/50;
 
     // if a random number from 0-3 is less than or equal to 2
     if (easyorhard[i]<=2){
 
     //draws and resizes a green car and rectangle around it
     bCar.resize(w/40*3, h/40*5);
-    image(bCar, rectX[i], blocks[i]);
-    Rectangle green = new Rectangle(rectX[i],blocks[i],bCar.width,bCar.height);
+    image(bCar, rectX[i], badcar[i]);
+    Rectangle green = new Rectangle(rectX[i],badcar[i],bCar.width,bCar.height);
 
     // if the rectangle around the yellow car touches the rectangle around the green car or loses fuel or runs off the road
     if(yellow.intersects(green)||fuel<=0||carX<=0||carX+img.width>=w){
@@ -208,7 +201,7 @@ public class Sketch1 extends PApplet {
     difficulty = 1;
 
   // cars go to top of screen
-    blocks[i] = (h/20)*(-1);
+    badcar[i] = (h/20)*(-1);
 
   // your car centers
     carX = w/40*19;
@@ -222,11 +215,11 @@ public class Sketch1 extends PApplet {
 
       //draws and resizes a grey truck and rectangle around it
       truck.resize(w/40*3,h/40*6);
-      image(truck, rectX[i], blocks[i]);
-      Rectangle grey = new Rectangle(rectX[i],blocks[i],truck.width,truck.height);
+      image(truck, rectX[i], badcar[i]);
+      Rectangle grey = new Rectangle(rectX[i],badcar[i],truck.width,truck.height);
 
       // trucks go faster since they move slower
-      blocks[i] = blocks[i] + h/200;
+      badcar[i] = badcar[i] + h/200;
 
       // if the rectangle around the yellow car touches the rectangle around the grey truck or loses fuel or runs off the road
       if(yellow.intersects(grey)||fuel<=0||carX<=0||carX+img.width>=w){
@@ -249,15 +242,15 @@ public class Sketch1 extends PApplet {
       pointsInt = 0;
       play = "";
       difficulty = 1;
-      blocks[i] = (h/20)*(-1);
+      badcar[i] = (h/20)*(-1);
       carX = w/40*19;
       fuel = 100;
     } 
     }
     
     // if cars are off road
-    if (blocks[i] >= h/10*13) {
-      blocks[i] = h/20*(-1);
+    if (badcar[i] >= h/10*13) {
+      badcar[i] = h/20*(-1);
 
       // random from 0-width-1
       Random rand = new Random();
@@ -285,7 +278,7 @@ public class Sketch1 extends PApplet {
     }  
     
     // when the car gets to the bottom
-    if(blocks[i]==h/20*(-1)){
+    if(badcar[i]==h/20*(-1)){
 
       //a new random from 0-3 is selected
       Random corb = new Random();
@@ -303,52 +296,44 @@ public class Sketch1 extends PApplet {
   if(fuel <=30 && timeBetweenGas>=h/8){
 
     // makes gas move down
-    gases+=h/50;
+    gasesY+=h/50;
 
     // if gas passes the bottom
-    if(gases>=h){
+    if(gasesY>=h){
 
       // gas goes to top
-      gases = h/20*(-1);
+      gasesY = h/20*(-1);
 
       // if gas is back at the top
-      if(gases<=0){
+      if(gasesY<=0){
 
         // random chance of gas from 0-9
         Random gaschance = new Random();
       int gas_random = gaschance.nextInt(10);
-      gasmas = gas_random;
+      gaschance1 = gas_random;
 
       // random gas x from 0-width-1
       Random gla = new Random();
       int me_random = gla.nextInt(w);
       gasesX = me_random;
         }
-      // random chance of gas from 0-9
-      Random gaschance = new Random();
-    int gas_random = gaschance.nextInt(10);
-    gasmas = gas_random;
-
-    // random gas x from 0-width-1
-    Random gla = new Random();
-    int me_random = gla.nextInt(w);
-    gasesX = me_random;
+      
     }
 
       // if random from 0-9 is less than or equal to 6
-      if(gasmas <=6){
+      if(gaschance1 <=6){
         
         // draws rectangle around gas  
-        Rectangle black = new Rectangle(gasesX,gases,needgas.width,needgas.height);
+        Rectangle black = new Rectangle(gasesX,gasesY,needgas.width,needgas.height);
 
         // draws gas image
-        image(needgas, gasesX,gases);
+        image(needgas, gasesX,gasesY);
        
         // if car touches gas and timer is at or above a certain number
         if(yellow.intersects(black)&& timeBetweenGas >=h/8&& fuel<=99){
           fuel++;
           timeBetweenGas = 0;
-          gases = h*2;
+          gasesY = h*2;
         }
         
         
@@ -359,19 +344,19 @@ public class Sketch1 extends PApplet {
     // if fuel is in between 30 and 100
     else if(fuel <=100&& fuel>30 && timeBetweenGas>=h/8){
       // same
-      gases+=h/50;
+      gasesY+=h/50;
 
       // same
-      if(gases>=h){
-        gases = h/20*(-1);
+      if(gasesY>=h){
+        gasesY = h/20*(-1);
 
       // same
-        if(gases<=0){
+        if(gasesY<=0){
 
       // same
         Random gaschance = new Random();
       int gas_random = gaschance.nextInt(10);
-      gasmas = gas_random;
+      gaschance1 = gas_random;
 
       // same
       Random gla = new Random();
@@ -380,20 +365,19 @@ public class Sketch1 extends PApplet {
         }
       }
       // if random from 0-9 is less than or equal to 4
-      if(gasmas >=4){
+      if(gaschance1 >=4){
         
         // same 
-        Rectangle black = new Rectangle(gasesX,gases,needgas.width,needgas.height);
+        Rectangle black = new Rectangle(gasesX,gasesY,needgas.width,needgas.height);
 
         // same
-        image(needgas, gasesX,gases);
+        image(needgas, gasesX,gasesY);
         
         // same
         if(yellow.intersects(black)&& timeBetweenGas >=h/8&& fuel<=99){
             fuel++;
             timeBetweenGas = 0;
-            timeGasGlitch = 0;
-            gases = h*2;
+            gasesY = h*2;
             
         }
         
